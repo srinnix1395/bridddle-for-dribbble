@@ -12,11 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.TranslucentBars">
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="${apiKey}"
-            />
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
