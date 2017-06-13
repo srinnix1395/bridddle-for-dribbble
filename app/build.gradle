@@ -33,7 +33,7 @@ android {
         buildConfigField "String", "DRIBBBLE_CLIENT_SECRET", "\"${DRIBBBLE_CLIENT_SECRET}\""
         buildConfigField "String", "DRIBBBLE_ACCESS_TOKEN", "\"${DRIBBBLE_ACCESS_TOKEN}\""
 
-        vectorDrawables.useSupportLibrary = true
+          vectorDrawables.useSupportLibrary = true
 
     }
 
