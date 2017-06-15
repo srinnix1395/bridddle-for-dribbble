@@ -3,7 +3,6 @@ package io.b1ackr0se.bridddle;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
@@ -39,7 +38,6 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
 
     private Menu menu;
     private boolean isToolbarShowing = true;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

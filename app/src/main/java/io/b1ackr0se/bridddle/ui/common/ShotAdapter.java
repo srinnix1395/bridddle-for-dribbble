@@ -20,86 +20,86 @@ import io.b1ackr0se.bridddle.R;
 import io.b1ackr0se.bridddle.data.model.Shot;
 
 public class ShotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    public static final int TYPE_PROGRESS = 0;
-    public static final int TYPE_ITEM = 1;
+  public static final int TYPE_PROGRESS = 0;
+  public static final int TYPE_ITEM = 1;
 
-    private List<Shot> shots;
-    private TypedArray placeHolderColor;
-    private OnShotClickListener onShotClickListener;
+  private List<Shot> shots;
+  private TypedArray placeHolderColor;
+  private OnShotClickListener onShotClickListener;
 
-    public ShotAdapter(Context context, List<Shot> list, boolean lightTheme) {
-        this.shots = list;
-        placeHolderColor = context.getResources().obtainTypedArray(lightTheme ? R.array.placeholder_light : R.array.placeholder);
+  public ShotAdapter(Context context, List<Shot> list, boolean lightTheme) {
+    this.shots = list;
+    placeHolderColor = context.getResources().obtainTypedArray(lightTheme ? R.array.placeholder_light : R.array.placeholder);
+  }
+
+  @Override
+  public long getItemId(int position) {
+    if (shots.get(position) != null) {
+      return shots.get(position).getId();
     }
+    return new Random().nextLong();
+  }
 
-    @Override
-    public long getItemId(int position) {
-        if (shots.get(position) != null) {
-            return shots.get(position).getId();
-        }
-        return new Random().nextLong();
+  public void setOnShotClickListener(OnShotClickListener onShotClickListener) {
+    this.onShotClickListener = onShotClickListener;
+  }
+
+  @Override
+  public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    if (viewType == TYPE_PROGRESS)
+      return new ProgressViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_progress, parent, false));
+    return new ShotViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shot, parent, false));
+  }
+
+  @Override
+  public int getItemViewType(int position) {
+    return shots.get(position) != null ? TYPE_ITEM : TYPE_PROGRESS;
+  }
+
+  @Override
+  public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    if (viewHolder instanceof ShotViewHolder) {
+      ShotViewHolder holder = (ShotViewHolder) viewHolder;
+      Shot shot = shots.get(position);
+
+      holder.itemView.setOnClickListener(view -> {
+        if (onShotClickListener != null)
+          onShotClickListener.onClick(view, shot);
+      });
+
+      holder.itemView.setOnLongClickListener(l -> {
+        if (onShotClickListener != null)
+          onShotClickListener.onLongClick(l, shot);
+        return true;
+      });
+
+      holder.shotImageView.setBackgroundColor(placeHolderColor.getColor((position % placeHolderColor.length()), 0));
+
+      holder.gifIndicator.setVisibility(shot.getAnimated() ? View.VISIBLE : View.INVISIBLE);
+
+      Glide.with(holder.shotImageView.getContext())
+          .load(shot.getImages().getNormal())
+          .diskCacheStrategy(DiskCacheStrategy.ALL)
+          .into(new GlideDrawableImageViewTarget(holder.shotImageView) {
+            @Override
+            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
+              super.onResourceReady(resource, animation);
+              resource.stop();
+            }
+
+            @Override
+            public void onStart() {
+            }
+
+            @Override
+            public void onStop() {
+            }
+          });
     }
+  }
 
-    public void setOnShotClickListener(OnShotClickListener onShotClickListener) {
-        this.onShotClickListener = onShotClickListener;
-    }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == TYPE_PROGRESS)
-            return new ProgressViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_progress, parent, false));
-        return new ShotViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shot, parent, false));
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return shots.get(position) != null ? TYPE_ITEM : TYPE_PROGRESS;
-    }
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        if (viewHolder instanceof ShotViewHolder) {
-            ShotViewHolder holder = (ShotViewHolder) viewHolder;
-            Shot shot = shots.get(position);
-
-            holder.itemView.setOnClickListener(view -> {
-                if (onShotClickListener != null)
-                    onShotClickListener.onClick(view, shot);
-            });
-
-            holder.itemView.setOnLongClickListener(l -> {
-                if (onShotClickListener != null)
-                    onShotClickListener.onLongClick(l, shot);
-                return true;
-            });
-
-            holder.shotImageView.setBackgroundColor(placeHolderColor.getColor((position % placeHolderColor.length()), 0));
-
-            holder.gifIndicator.setVisibility(shot.getAnimated() ? View.VISIBLE : View.INVISIBLE);
-
-            Glide.with(holder.shotImageView.getContext())
-                    .load(shot.getImages().getNormal())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(new GlideDrawableImageViewTarget(holder.shotImageView) {
-                        @Override
-                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
-                            super.onResourceReady(resource, animation);
-                            resource.stop();
-                        }
-
-                        @Override
-                        public void onStart() {
-                        }
-
-                        @Override
-                        public void onStop() {
-                        }
-                    });
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        return shots.size();
-    }
+  @Override
+  public int getItemCount() {
+    return shots.size();
+  }
 }
